@@ -21,13 +21,11 @@ export class UserSettingsPage extends BasePage {
     return this.page.getByRole('heading', { name: /^profile$/i });
   }
 
+  get profileCard(): Locator {
+    return this.page.locator('[class*="Profile__CardProfile"]').first();
+  }
+
   private profileRoot(): Locator {
-    return this.page
-      .getByRole('main')
-      .or(this.page.locator('body'))
-      .filter({
-        hasText: /account|profile|headline/i,
-      })
-      .first();
+    return this.profileCard;
   }
 }

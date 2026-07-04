@@ -10,6 +10,7 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Default test run: `npm test`
 - Mock contract run: `npm run test:mock`
 - Live mutation run: `npm run test:live`
+- Visual snapshot run: `npm run test:visual`
 - Full run: `npm run test:all`
 - Headed mock run: `npm run test:review:headed`
 
@@ -30,6 +31,7 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Public fixtures should expose ready-to-use pages/components, for example `{ userSettingsPage }`.
 - Add new scenario fixtures in `src/fixtures/test.ts` rather than constructing UI objects in specs.
 - Default tests should not mutate the review account; use `npm run test:live` for live mutation coverage.
+- Visual tests should use mocked data and committed Playwright snapshots, not the live mutable profile state.
 
 ## UI Model Rules
 
@@ -47,6 +49,7 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Assertions belong in specs or future dedicated assertion helpers, not in UI models.
 - Use Playwright's native auto-waiting through `expect(locator)` in specs.
 - Keep mock tests deterministic and live mutations opt-in.
+- Update visual baselines intentionally with `npm run test:visual -- --update-snapshots`.
 - If a flow changes, update the specific fixture/test path that needs it instead of adding broad waits.
 
 ## Current Known App Behavior

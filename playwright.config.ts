@@ -7,6 +7,7 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
+  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: config.baseUrl,

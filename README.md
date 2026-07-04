@@ -45,10 +45,16 @@ Explicit targets:
 ```bash
 npm run test:mock
 npm run test:live
+npm run test:visual
 npm run test:all
 ```
 
 The first run creates `.auth/review-user.json` through the setup project. Live tests restore the Headline to `QA Review Headline` before and after each test.
+Visual tests use Playwright snapshots against the mocked Profile page. Update baselines intentionally with:
+
+```bash
+npm run test:visual -- --update-snapshots
+```
 
 ## Architecture
 
@@ -58,5 +64,6 @@ The first run creates `.auth/review-user.json` through the setup project. Live t
 - Page objects own distinct URLs and navigation.
 - Components and modals are composed under pages and lazy-loaded.
 - The default Headline suite uses Playwright route mocks. Live add/edit/delete coverage is opt-in with `npm run test:live`.
+- Visual regression coverage uses Playwright's built-in `toHaveScreenshot` snapshots and runs post-merge on `main`.
 
 Specs should not destructure `{ page }`, `{ context }`, `{ browser }`, `{ ui }`, or `{ _ui }`. New scenario fixtures should be added in `src/fixtures/test.ts`.
