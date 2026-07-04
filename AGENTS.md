@@ -47,6 +47,9 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 
 - Tests should express behavior through extended fixtures and composed UI objects.
 - Assertions belong in specs or future dedicated assertion helpers, not in UI models.
+- Put reusable expectations in `tests/assertions/`; helper names should describe observable state or API contract, not retell the test name.
+- Put static expected payloads, endpoint fragments, and repeated literal values in `tests/data/`.
+- Do not put assertion logic in `tests/data/`, and do not put mutable setup/cleanup in assertion helpers.
 - Use Playwright's native auto-waiting through `expect(locator)` in specs.
 - Keep mock tests deterministic and live mutations opt-in.
 - Update visual baselines intentionally with `npm run test:visual -- --update-snapshots`.

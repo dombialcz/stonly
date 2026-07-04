@@ -1,5 +1,6 @@
 import type { HeadlineApiFixtures } from '../../src/api/headline-api-mock';
 import { config } from '../../src/config/config';
+import { successfulUserUpdateResponse } from '../data/headline-api.data';
 
 export const headlineApiFixtures: HeadlineApiFixtures = {
   authStatusResponse: {
@@ -56,10 +57,5 @@ export const headlineApiFixtures: HeadlineApiFixtures = {
       csrfToken: 'mock-csrf-token',
     },
   },
-  userUpdateResponse: {
-    result: true,
-    content: {
-      result: 1,
-    },
-  },
+  userUpdateResponse: successfulUserUpdateResponse,
 };

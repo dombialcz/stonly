@@ -1,5 +1,12 @@
 import { config } from '../src/config/config';
 import { createMockTest, expect } from '../src/fixtures/test';
+import {
+  expectHeadlineToBeEmpty,
+  expectHeadlineToHaveValue,
+  expectMockedHeadlineClear,
+  expectMockedHeadlineUpdate,
+  expectMockedProfileRead,
+} from './assertions/headline.assertions';
 import { headlineApiFixtures } from './fixtures/headline-api-fixtures';
 
 const test = createMockTest(headlineApiFixtures);
@@ -7,13 +14,9 @@ const test = createMockTest(headlineApiFixtures);
 test.describe('headline hybrid mock contract', () => {
   test('uses the mocked profile read response', async ({ mockedHeadlineProfile }) => {
     await expect(mockedHeadlineProfile.page.profileHeading).toBeVisible();
-    await expect(mockedHeadlineProfile.headline.value).toHaveText(config.headlineBaseline);
+    await expectHeadlineToHaveValue(mockedHeadlineProfile.headline, config.headlineBaseline);
 
-    expect(mockedHeadlineProfile.apiMock.authStatusRequests.length).toBeGreaterThan(0);
-    expect(mockedHeadlineProfile.apiMock.authStatusRequests[0]).toMatchObject({
-      method: 'GET',
-    });
-    expect(mockedHeadlineProfile.apiMock.authStatusRequests[0].url).toContain('/api/v1/auth/status');
+    expectMockedProfileRead(mockedHeadlineProfile.apiMock.authStatusRequests);
   });
 
   test('captures the mocked headline update contract', async ({ mockedHeadlineProfile }) => {
@@ -23,14 +26,8 @@ test.describe('headline hybrid mock contract', () => {
     await mockedHeadlineProfile.headline.setValue(headline);
 
     const update = await updateRequest;
-    await expect(mockedHeadlineProfile.headline.value).toHaveText(headline);
-    expect(update).toMatchObject({
-      method: 'PUT',
-      body: {
-        headline,
-      },
-    });
-    expect(update.url).toContain('/api/v1/user');
+    await expectHeadlineToHaveValue(mockedHeadlineProfile.headline, headline);
+    expectMockedHeadlineUpdate(update, headline);
   });
 
   test('captures the mocked headline delete contract', async ({ mockedHeadlineProfile }) => {
@@ -39,13 +36,7 @@ test.describe('headline hybrid mock contract', () => {
     await mockedHeadlineProfile.headline.deleteValue();
 
     const update = await updateRequest;
-    await expect(mockedHeadlineProfile.headline.value).toHaveText('No headline added');
-    expect(update).toMatchObject({
-      method: 'PUT',
-      body: {
-        headline: '',
-      },
-    });
-    expect(update.url).toContain('/api/v1/user');
+    await expectHeadlineToBeEmpty(mockedHeadlineProfile.headline);
+    expectMockedHeadlineClear(update);
   });
 });

@@ -1,10 +1,16 @@
 import { config } from '../src/config/config';
 import { expect, test } from '../src/fixtures/test';
+import {
+  expectHeadlineToBeEmpty,
+  expectHeadlineToHaveValue,
+  expectLiveHeadlineClear,
+  expectLiveHeadlineUpdate,
+} from './assertions/headline.assertions';
 
 test.describe('headline live e2e', () => {
   test('reads the baseline headline', async ({ headlineProfile }) => {
     await expect(headlineProfile.page.profileHeading).toBeVisible();
-    await expect(headlineProfile.headline.value).toHaveText(config.headlineBaseline);
+    await expectHeadlineToHaveValue(headlineProfile.headline, config.headlineBaseline);
 
     expect(await headlineProfile.headline.read()).toBe(config.headlineBaseline);
   });
@@ -16,9 +22,8 @@ test.describe('headline live e2e', () => {
     await headlineProfile.headline.setValue(headline);
 
     const update = await updateRequest;
-    await expect(headlineProfile.headline.value).toHaveText(headline);
-    expect(update.requestBody).toMatchObject({ headline });
-    expect(update.responseBody).toEqual({ result: true, content: { result: 1 } });
+    await expectHeadlineToHaveValue(headlineProfile.headline, headline);
+    expectLiveHeadlineUpdate(update, headline);
   });
 
   test('deletes the headline by saving an empty value', async ({ headlineProfile }) => {
@@ -27,9 +32,7 @@ test.describe('headline live e2e', () => {
     await headlineProfile.headline.deleteValue();
 
     const update = await updateRequest;
-    await expect(headlineProfile.headline.value).toHaveText('No headline added');
-    await expect(headlineProfile.headline.addAction).toHaveText('Add');
-    expect(update.requestBody).toMatchObject({ headline: '' });
-    expect(update.responseBody).toEqual({ result: true, content: { result: 1 } });
+    await expectHeadlineToBeEmpty(headlineProfile.headline);
+    expectLiveHeadlineClear(update);
   });
 });
