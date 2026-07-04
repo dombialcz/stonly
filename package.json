@@ -12,6 +12,8 @@
     "test:review": "npm run test:mock",
     "test:review:headed": "cross-env STONLY_CONFIG=review playwright test tests/headline.mock.spec.ts --headed",
     "test:auth:review": "cross-env STONLY_CONFIG=review playwright test tests/auth.setup.ts --project=setup",
+    "test:visual:docker": "docker compose run --rm playwright sh -c \"npm ci && npm run test:visual\"",
+    "test:visual:update": "docker compose run --rm playwright sh -c \"npm ci && npm run test:visual -- --update-snapshots\"",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
