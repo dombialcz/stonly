@@ -38,13 +38,17 @@ Additional targets can be added as JSON files under `config/`, then selected wit
 npm test
 ```
 
-Explicit review target:
+The default run executes the hybrid mocked Headline suite, which avoids mutating the shared review account.
+
+Explicit targets:
 
 ```bash
-npm run test:review
+npm run test:mock
+npm run test:live
+npm run test:all
 ```
 
-The first run creates `.auth/review-user.json` through the setup project, then runs the read-only User Settings smoke test.
+The first run creates `.auth/review-user.json` through the setup project. Live tests restore the Headline to `QA Review Headline` before and after each test.
 
 ## Architecture
 
@@ -53,5 +57,6 @@ The first run creates `.auth/review-user.json` through the setup project, then r
 - Public fixtures derive from `_ui` and expose ready-to-use pages/components.
 - Page objects own distinct URLs and navigation.
 - Components and modals are composed under pages and lazy-loaded.
+- The default Headline suite uses Playwright route mocks. Live add/edit/delete coverage is opt-in with `npm run test:live`.
 
 Specs should not destructure `{ page }`, `{ context }`, `{ browser }`, `{ ui }`, or `{ _ui }`. New scenario fixtures should be added in `src/fixtures/test.ts`.

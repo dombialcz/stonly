@@ -8,8 +8,10 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Install browser: `npx playwright install chromium`
 - Typecheck: `npm run typecheck`
 - Default test run: `npm test`
-- Review config run: `npm run test:review`
-- Headed review run: `npm run test:review:headed`
+- Mock contract run: `npm run test:mock`
+- Live mutation run: `npm run test:live`
+- Full run: `npm run test:all`
+- Headed mock run: `npm run test:review:headed`
 
 ## Config
 
@@ -27,6 +29,7 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - The root `_ui` fixture is internal plumbing only.
 - Public fixtures should expose ready-to-use pages/components, for example `{ userSettingsPage }`.
 - Add new scenario fixtures in `src/fixtures/test.ts` rather than constructing UI objects in specs.
+- Default tests should not mutate the review account; use `npm run test:live` for live mutation coverage.
 
 ## UI Model Rules
 
@@ -43,7 +46,7 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Tests should express behavior through extended fixtures and composed UI objects.
 - Assertions belong in specs or future dedicated assertion helpers, not in UI models.
 - Use Playwright's native auto-waiting through `expect(locator)` in specs.
-- Keep the current smoke test read-only unless the task explicitly moves to add/edit/delete coverage.
+- Keep mock tests deterministic and live mutations opt-in.
 - If a flow changes, update the specific fixture/test path that needs it instead of adding broad waits.
 
 ## Current Known App Behavior
@@ -51,4 +54,7 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Login URL is `https://stonly.com/authentication`.
 - User Settings Profile URL path is `/app/general/userSettings/Profile`.
 - The profile Headline is a read-only row before clicking `Add`; it is not a textbox in the closed state.
+- Headline writes and clears use `PUT https://app.stonly.com/api/v1/user`.
+- Deleting the Headline is implemented by saving an empty string.
+- Live Headline tests restore the account to `QA Review Headline`.
 - The Stonly login page can reset fields if filled before hydration completes, so `tests/auth.setup.ts` waits for login-page stability before filling credentials.

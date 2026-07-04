@@ -15,7 +15,11 @@ type RawConfig = {
     passwordBase64?: string;
     storageState: string;
   };
-  testData?: Record<string, string>;
+  testData?: {
+    userDisplayName?: string;
+    headlineBaseline?: string;
+    [key: string]: string | undefined;
+  };
 };
 
 const selectedConfig = process.env.STONLY_CONFIG ?? 'review';
@@ -55,6 +59,7 @@ export const config = {
   email: credential(rawConfig.auth.email, rawConfig.auth.emailBase64, 'email'),
   password: credential(rawConfig.auth.password, rawConfig.auth.passwordBase64, 'password'),
   authStatePath: rawConfig.auth.storageState,
+  headlineBaseline: rawConfig.testData?.headlineBaseline ?? 'QA Review Headline',
   testData: rawConfig.testData ?? {},
 };
 

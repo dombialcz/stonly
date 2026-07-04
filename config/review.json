@@ -11,6 +11,7 @@
     "storageState": ".auth/review-user.json"
   },
   "testData": {
-    "userDisplayName": "Tester Testownik"
+    "userDisplayName": "Tester Testownik",
+    "headlineBaseline": "QA Review Headline"
   }
 }
