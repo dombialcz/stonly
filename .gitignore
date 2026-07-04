@@ -1,0 +1,8 @@
+node_modules/
+.env
+config/local*.json
+.auth/
+playwright-report/
+test-results/
+blob-report/
+*.log

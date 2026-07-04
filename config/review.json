@@ -1,0 +1,16 @@
+{
+  "name": "review",
+  "app": {
+    "baseUrl": "https://app.stonly.com",
+    "loginUrl": "https://stonly.com/authentication",
+    "userSettingsPath": "/app/general/userSettings/Profile"
+  },
+  "auth": {
+    "emailBase64": "ZG9tYmlhbGN6K3N0b25seSt0ZXN0QGdtYWlsLmNvbQ==",
+    "passwordBase64": "bWFnaWNQQVNTV09SRDEh",
+    "storageState": ".auth/review-user.json"
+  },
+  "testData": {
+    "userDisplayName": "Tester Testownik"
+  }
+}

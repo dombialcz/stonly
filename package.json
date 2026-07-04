@@ -1,0 +1,19 @@
+{
+  "name": "stonly-qa-playwright-wireframe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fixture-first Playwright wireframe for the Stonly QA take-home task.",
+  "scripts": {
+    "test": "npm run test:review",
+    "test:review": "cross-env STONLY_CONFIG=review playwright test",
+    "test:review:headed": "cross-env STONLY_CONFIG=review playwright test --headed",
+    "test:auth:review": "cross-env STONLY_CONFIG=review playwright test tests/auth.setup.ts --project=setup",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.0",
+    "@types/node": "^26.1.0",
+    "cross-env": "^7.0.3",
+    "typescript": "^5.5.0"
+  }
+}
