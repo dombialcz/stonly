@@ -1,4 +1,3 @@
-import type { ApiCapture } from '../../src/api/api-recorder';
 import type { MockedRequest } from '../../src/api/headline-api-mock';
 import type { HeadlineComponent } from '../../src/ui/components/headline.component';
 import { expect } from '../../src/fixtures/test';
@@ -20,14 +19,8 @@ export async function expectHeadlineToBeEmpty(headline: HeadlineComponent): Prom
   await expect(headline.addAction).toHaveText(addHeadlineActionText);
 }
 
-export function expectLiveHeadlineUpdate(update: ApiCapture, headline: string): void {
-  expect(update.requestBody).toMatchObject({ headline });
-  expect(update.responseBody).toEqual(successfulUserUpdateResponse);
-}
-
-export function expectLiveHeadlineClear(update: ApiCapture): void {
-  expect(update.requestBody).toMatchObject(emptyHeadlineRequest);
-  expect(update.responseBody).toEqual(successfulUserUpdateResponse);
+export async function expectHeadlineNotToHaveValue(headline: HeadlineComponent, value: string): Promise<void> {
+  await expect(headline.value).not.toHaveText(value);
 }
 
 export function expectMockedProfileRead(requests: MockedRequest[]): void {

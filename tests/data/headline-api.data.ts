@@ -5,6 +5,13 @@ export const successfulUserUpdateResponse = {
   },
 };
 
+export const failedUserUpdateResponse = {
+  result: false,
+  content: {
+    message: 'Mocked headline update failure',
+  },
+};
+
 export const emptyHeadlineRequest = {
   headline: '',
 };

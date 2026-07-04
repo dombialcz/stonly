@@ -32,6 +32,9 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Add new scenario fixtures in `src/fixtures/test.ts` rather than constructing UI objects in specs.
 - Default tests should not mutate the review account; use `npm run test:live` for live mutation coverage.
 - Visual tests should use mocked data and committed Playwright snapshots, not the live mutable profile state.
+- Mock and visual suites intentionally use real auth/app shell in this take-home; route mocks should cover only the Headline API behavior under test.
+- Live tests are UI behavior tests only: do not assert HTTP status codes, request payloads, response payloads, or expose API recorder objects from live fixtures.
+- API contract assertions and backend failure-mode coverage belong in mocked route-based suites.
 
 ## UI Model Rules
 
@@ -50,8 +53,13 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - Put reusable expectations in `tests/assertions/`; helper names should describe observable state or API contract, not retell the test name.
 - Put static expected payloads, endpoint fragments, and repeated literal values in `tests/data/`.
 - Do not put assertion logic in `tests/data/`, and do not put mutable setup/cleanup in assertion helpers.
+- Use sparse behavior tags only when they describe real coverage, such as `@happypath`, `@negative`, and `@visual`; reserve `@permission` for actual role/permission scenarios.
+- Use `test.step` for report and trace clarity when a test has multiple meaningful phases.
+- Prefer assertion helpers over custom `expect` matchers until repetition clearly justifies extending Playwright's assertion API.
 - Use Playwright's native auto-waiting through `expect(locator)` in specs.
-- Keep mock tests deterministic and live mutations opt-in.
+- Keep mocked API behavior deterministic and live mutations opt-in.
+- Live mutation specs that share the review account should opt out of file-level parallelism.
+- Use route mocks for negative backend scenarios such as failed saves; keep live tests focused on user-observable UI behavior.
 - Update visual baselines intentionally with `npm run test:visual -- --update-snapshots`.
 - If a flow changes, update the specific fixture/test path that needs it instead of adding broad waits.
 

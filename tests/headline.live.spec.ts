@@ -3,36 +3,41 @@ import { expect, test } from '../src/fixtures/test';
 import {
   expectHeadlineToBeEmpty,
   expectHeadlineToHaveValue,
-  expectLiveHeadlineClear,
-  expectLiveHeadlineUpdate,
 } from './assertions/headline.assertions';
 
 test.describe('headline live e2e', () => {
-  test('reads the baseline headline', async ({ headlineProfile }) => {
-    await expect(headlineProfile.page.profileHeading).toBeVisible();
-    await expectHeadlineToHaveValue(headlineProfile.headline, config.headlineBaseline);
+  test.describe.configure({ mode: 'serial' });
 
-    expect(await headlineProfile.headline.read()).toBe(config.headlineBaseline);
+  test('reads the baseline headline @happypath', async ({ headlineProfile }) => {
+    await test.step('verify baseline headline is visible', async () => {
+      await expect(headlineProfile.page.profileHeading).toBeVisible();
+      await expectHeadlineToHaveValue(headlineProfile.headline, config.headlineBaseline);
+    });
+
+    await test.step('verify readable headline value', async () => {
+      expect(await headlineProfile.headline.read()).toBe(config.headlineBaseline);
+    });
   });
 
-  test('writes a new headline', async ({ headlineProfile }) => {
+  test('writes a new headline @happypath', async ({ headlineProfile }) => {
     const headline = `QA Live Headline ${Date.now()}`;
-    const updateRequest = headlineProfile.apiRecorder.waitForUserUpdate();
 
-    await headlineProfile.headline.setValue(headline);
+    await test.step('update headline through the UI', async () => {
+      await headlineProfile.headline.setValue(headline);
+    });
 
-    const update = await updateRequest;
-    await expectHeadlineToHaveValue(headlineProfile.headline, headline);
-    expectLiveHeadlineUpdate(update, headline);
+    await test.step('verify updated headline row', async () => {
+      await expectHeadlineToHaveValue(headlineProfile.headline, headline);
+    });
   });
 
-  test('deletes the headline by saving an empty value', async ({ headlineProfile }) => {
-    const updateRequest = headlineProfile.apiRecorder.waitForUserUpdate();
+  test('clears the headline by saving an empty value @happypath', async ({ headlineProfile }) => {
+    await test.step('clear headline through the UI', async () => {
+      await headlineProfile.headline.clearValue();
+    });
 
-    await headlineProfile.headline.deleteValue();
-
-    const update = await updateRequest;
-    await expectHeadlineToBeEmpty(headlineProfile.headline);
-    expectLiveHeadlineClear(update);
+    await test.step('verify empty headline row', async () => {
+      await expectHeadlineToBeEmpty(headlineProfile.headline);
+    });
   });
 });

@@ -1,5 +1,4 @@
 import { test as base, expect, type Page, type TestType } from '@playwright/test';
-import { ApiRecorder } from '../api/api-recorder';
 import { HeadlineApiMock, type HeadlineApiFixtures } from '../api/headline-api-mock';
 import { config } from '../config/config';
 import type { HeadlineComponent } from '../ui/components/headline.component';
@@ -9,7 +8,6 @@ import type { UserSettingsPage } from '../ui/pages/user-settings.page';
 type HeadlineProfile = {
   page: UserSettingsPage;
   headline: HeadlineComponent;
-  apiRecorder: ApiRecorder;
 };
 
 type MockedHeadlineProfile = {
@@ -39,23 +37,18 @@ const internalTest = base.extend<InternalFixtures>({
     await use(_ui.userSettingsPage);
   },
 
-  headlineProfile: async ({ page, _ui }, use) => {
-    const apiRecorder = new ApiRecorder(page);
-    apiRecorder.start();
-
+  headlineProfile: async ({ _ui }, use) => {
     await _ui.userSettingsPage.navigate();
-    await saveHeadlineAndWait(apiRecorder, _ui.userSettingsPage.profileForm.headline, config.headlineBaseline);
-    apiRecorder.clear();
+    await saveHeadlineAndWait(_ui.userSettingsPage.profileForm.headline, config.headlineBaseline);
 
     try {
       await use({
         page: _ui.userSettingsPage,
         headline: _ui.userSettingsPage.profileForm.headline,
-        apiRecorder,
       });
     } finally {
       await _ui.userSettingsPage.navigate();
-      await saveHeadlineAndWait(apiRecorder, _ui.userSettingsPage.profileForm.headline, config.headlineBaseline);
+      await saveHeadlineAndWait(_ui.userSettingsPage.profileForm.headline, config.headlineBaseline);
     }
   },
 });
@@ -86,7 +79,6 @@ export const createMockTest = (
 };
 
 const saveHeadlineAndWait = async (
-  apiRecorder: ApiRecorder,
   headline: HeadlineComponent,
   value: string,
 ): Promise<void> => {
@@ -94,8 +86,6 @@ const saveHeadlineAndWait = async (
     return;
   }
 
-  apiRecorder.clear();
-  const update = apiRecorder.waitForUserUpdate();
   await headline.setValue(value);
-  await update;
+  await expect(headline.value).toHaveText(value);
 };

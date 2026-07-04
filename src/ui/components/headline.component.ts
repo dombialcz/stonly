@@ -47,10 +47,6 @@ export class HeadlineComponent extends BaseComponent {
     return this.editor.saveAction;
   }
 
-  get deleteAction(): Locator {
-    return this.editor.saveAction;
-  }
-
   async read(): Promise<string> {
     return (await this.value.textContent())?.trim() ?? '';
   }
@@ -61,10 +57,10 @@ export class HeadlineComponent extends BaseComponent {
     await this.saveAction.click();
   }
 
-  async deleteValue(): Promise<void> {
+  async clearValue(): Promise<void> {
     await this.openEditor();
     await this.input.fill('');
-    await this.deleteAction.click();
+    await this.saveAction.click();
   }
 
   private async openEditor(): Promise<void> {

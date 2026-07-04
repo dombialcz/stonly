@@ -2,7 +2,10 @@ import type { Page, Route } from '@playwright/test';
 
 export type HeadlineApiFixtures = {
   authStatusResponse: unknown;
-  userUpdateResponse: unknown;
+  userUpdateResponse: {
+    status?: number;
+    body: unknown;
+  };
 };
 
 export type MockedRequest = {
@@ -50,9 +53,9 @@ export class HeadlineApiMock {
       this.resolvePending(request);
 
       await route.fulfill({
-        status: 200,
+        status: this.fixtures.userUpdateResponse.status ?? 200,
         contentType: 'application/json',
-        body: JSON.stringify(this.fixtures.userUpdateResponse),
+        body: JSON.stringify(this.fixtures.userUpdateResponse.body),
       });
     });
   }

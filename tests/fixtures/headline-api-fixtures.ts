@@ -57,5 +57,7 @@ export const headlineApiFixtures: HeadlineApiFixtures = {
       csrfToken: 'mock-csrf-token',
     },
   },
-  userUpdateResponse: successfulUserUpdateResponse,
+  userUpdateResponse: {
+    body: successfulUserUpdateResponse,
+  },
 };

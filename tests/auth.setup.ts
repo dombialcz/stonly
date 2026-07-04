@@ -8,7 +8,8 @@ test('authenticate review user', async ({ page }) => {
   const ui = new Ui(page);
 
   await ui.loginPage.navigate();
-  await page.waitForLoadState('networkidle');
+  await expect(ui.loginPage.emailInput).toBeEditable();
+  await expect(ui.loginPage.passwordInput).toBeEditable();
   await ui.loginPage.fillCredentials();
   await expect(ui.loginPage.emailInput).toHaveValue(config.email);
   await expect(ui.loginPage.passwordInput).toHaveValue(config.password);
