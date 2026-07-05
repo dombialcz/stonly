@@ -1,66 +1,95 @@
 import { config } from '../src/config/config';
-import { createMockTest, expect } from '../src/fixtures/test';
+import { HeadlineApiMock, type HeadlineApiFixtures } from '../src/api/headline-api-mock';
+import { expect, test as base } from '../src/fixtures/test';
+import type { UserSettingsPage } from '../src/ui/pages/user-settings.page';
 import {
-  expectHeadlineNotToHaveValue,
-  expectHeadlineToBeEmpty,
-  expectHeadlineToHaveValue,
   expectMockedHeadlineClear,
   expectMockedHeadlineUpdate,
   expectMockedProfileRead,
-} from './assertions/headline.assertions';
-import { failedUserUpdateResponse } from './data/headline-api.data';
+} from './assertions/headline.api.assertions';
+import {
+  addHeadlineActionText,
+  emptyHeadlineText,
+  failedUserUpdateResponse,
+} from './data/headline-api.data';
 import { headlineApiFixtures } from './fixtures/headline-api-fixtures';
 
-const test = createMockTest(headlineApiFixtures);
+type HeadlineMockFixtures = {
+  headlineApiMock: HeadlineApiMock;
+  userSettingsPage: UserSettingsPage;
+};
+
+const createHeadlineMockTest = (fixtures: HeadlineApiFixtures) => base.extend<HeadlineMockFixtures>({
+  headlineApiMock: async ({ page }, use) => {
+    const headlineApiMock = new HeadlineApiMock(page, fixtures);
+    await headlineApiMock.install();
+    await use(headlineApiMock);
+  },
+
+  userSettingsPage: async ({ ui, headlineApiMock: _headlineApiMock }, use) => {
+    const userSettingsPage = ui.userSettingsPage;
+
+    await userSettingsPage.navigate();
+    await use(userSettingsPage);
+  },
+});
+
+const test = createHeadlineMockTest(headlineApiFixtures);
 
 test.describe('headline hybrid mock contract', () => {
-  test('uses the mocked profile read response @happypath', async ({ mockedHeadlineProfile }) => {
-    await test.step('verify mocked profile state is rendered', async () => {
-      await expect(mockedHeadlineProfile.page.profileHeading).toBeVisible();
-      await expectHeadlineToHaveValue(mockedHeadlineProfile.headline, config.headlineBaseline);
+  test('uses the mocked profile read response @happypath', async ({ userSettingsPage, headlineApiMock }) => {
+    const headline = userSettingsPage.profileForm.headline;
+
+    await test.step('verify mocked baseline Headline state is rendered', async () => {
+      await expect(userSettingsPage.profileHeading).toBeVisible();
+      await expect(headline.value).toHaveText(config.headlineBaseline);
     });
 
-    await test.step('verify profile read contract', async () => {
-      expectMockedProfileRead(mockedHeadlineProfile.apiMock.authStatusRequests);
-    });
-  });
-
-  test('captures the mocked headline update contract @happypath', async ({ mockedHeadlineProfile }) => {
-    const headline = 'QA Mock Headline';
-
-    const update = await test.step('update headline through the UI', async () => {
-      const updateRequest = mockedHeadlineProfile.apiMock.waitForUserUpdate();
-      await mockedHeadlineProfile.headline.setValue(headline);
-      return updateRequest;
-    });
-
-    await test.step('verify update request contract', async () => {
-      expectMockedHeadlineUpdate(update, headline);
-    });
-
-    await test.step('verify updated headline row', async () => {
-      await expectHeadlineToHaveValue(mockedHeadlineProfile.headline, headline);
+    await test.step('verify auth status read contract was consumed', async () => {
+      expectMockedProfileRead(headlineApiMock.authStatusRequests);
     });
   });
 
-  test('captures the mocked headline clear contract @happypath', async ({ mockedHeadlineProfile }) => {
-    const update = await test.step('clear headline through the UI', async () => {
-      const updateRequest = mockedHeadlineProfile.apiMock.waitForUserUpdate();
-      await mockedHeadlineProfile.headline.clearValue();
+  test('captures the mocked headline update contract @happypath', async ({ userSettingsPage, headlineApiMock }) => {
+    const headline = userSettingsPage.profileForm.headline;
+    const headlineValue = 'QA Mock Headline';
+
+    const update = await test.step('save a mocked Headline through the UI', async () => {
+      const updateRequest = headlineApiMock.waitForUserUpdate();
+      await headline.setValue(headlineValue);
       return updateRequest;
     });
 
-    await test.step('verify clear request contract', async () => {
+    await test.step('verify update request contains the requested Headline', async () => {
+      expectMockedHeadlineUpdate(update, headlineValue);
+    });
+
+    await test.step('verify the Headline row shows the mocked saved value', async () => {
+      await expect(headline.value).toHaveText(headlineValue);
+    });
+  });
+
+  test('captures the mocked headline clear contract @happypath', async ({ userSettingsPage, headlineApiMock }) => {
+    const headline = userSettingsPage.profileForm.headline;
+
+    const update = await test.step('save an empty Headline through the UI', async () => {
+      const updateRequest = headlineApiMock.waitForUserUpdate();
+      await headline.clearValue();
+      return updateRequest;
+    });
+
+    await test.step('verify clear request sends an empty Headline', async () => {
       expectMockedHeadlineClear(update);
     });
 
-    await test.step('verify empty headline row', async () => {
-      await expectHeadlineToBeEmpty(mockedHeadlineProfile.headline);
+    await test.step('verify the Headline row returns to the empty state', async () => {
+      await expect(headline.value).toHaveText(emptyHeadlineText);
+      await expect(headline.addAction).toHaveText(addHeadlineActionText);
     });
   });
 });
 
-const failedUpdateTest = createMockTest({
+const failedUpdateTest = createHeadlineMockTest({
   ...headlineApiFixtures,
   userUpdateResponse: {
     status: 500,
@@ -69,26 +98,27 @@ const failedUpdateTest = createMockTest({
 });
 
 failedUpdateTest.describe('headline hybrid mock failure contract', () => {
-  failedUpdateTest('does not show the attempted headline as saved when update fails @negative', async ({ mockedHeadlineProfile }) => {
-    const headline = 'QA Failed Mock Headline';
+  failedUpdateTest('does not show the attempted headline as saved when update fails @negative', async ({ userSettingsPage, headlineApiMock }) => {
+    const headline = userSettingsPage.profileForm.headline;
+    const headlineValue = 'QA Failed Mock Headline';
 
-    await failedUpdateTest.step('verify baseline headline before failed update', async () => {
-      await expectHeadlineToHaveValue(mockedHeadlineProfile.headline, config.headlineBaseline);
+    await failedUpdateTest.step('verify baseline Headline before the failed save', async () => {
+      await expect(headline.value).toHaveText(config.headlineBaseline);
     });
 
-    const update = await failedUpdateTest.step('attempt headline update through the UI', async () => {
-      const updateRequest = mockedHeadlineProfile.apiMock.waitForUserUpdate();
-      await mockedHeadlineProfile.headline.setValue(headline);
+    const update = await failedUpdateTest.step('attempt to save a Headline while the update API fails', async () => {
+      const updateRequest = headlineApiMock.waitForUserUpdate();
+      await headline.setValue(headlineValue);
       return updateRequest;
     });
 
-    await failedUpdateTest.step('verify failed update request contract', async () => {
-      expectMockedHeadlineUpdate(update, headline);
+    await failedUpdateTest.step('verify failed update request still carries the attempted Headline', async () => {
+      expectMockedHeadlineUpdate(update, headlineValue);
     });
 
-    await failedUpdateTest.step('verify attempted headline is not saved', async () => {
-      await expectHeadlineToHaveValue(mockedHeadlineProfile.headline, config.headlineBaseline);
-      await expectHeadlineNotToHaveValue(mockedHeadlineProfile.headline, headline);
+    await failedUpdateTest.step('verify the Headline row keeps the previous saved value', async () => {
+      await expect(headline.value).toHaveText(config.headlineBaseline);
+      await expect(headline.value).not.toHaveText(headlineValue);
     });
   });
 });

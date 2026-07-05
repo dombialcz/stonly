@@ -10,9 +10,9 @@ The suite is split into three layers:
 - Hybrid mock contract tests use the live authenticated app shell, then mock Headline-related API responses with Playwright routes.
 - Visual tests use the mocked Profile page state and Playwright snapshots to catch layout regressions without mutating the review account.
 
-The UI model is fixture-first. Specs consume scenario fixtures such as `headlineProfile` or `mockedHeadlineProfile`; they do not use raw `{ page }` or a public `{ ui }` fixture. The private UI root owns the Playwright page and lazily composes pages/components. Pages own navigation, components own meaningful UI chunks, and assertions stay in specs or assertion helpers.
+The UI model is fixture-first, with one shared root `{ ui }` fixture. Specs define local scenario fixtures when they need navigation, setup, teardown, or route mocks, then access product UI through composition such as `ui.userSettingsPage.profileForm.headline`. Pages own navigation, components own meaningful UI chunks, and assertions stay in specs or assertion helpers.
 
-If this grew to hundreds of tests with several engineers and frequent releases, I would split ownership by product area, keep each area behind public scenario fixtures, and add conventions for tags, data setup, and cleanup. I would also move more setup/teardown to supported APIs once available, separate smoke/regression/visual/live suites more aggressively, and keep CI tiers small enough that PR feedback remains useful.
+If this grew to hundreds of tests with several engineers and frequent releases, I would split ownership by product area, keep each area behind local scenario fixtures and helper modules, and add conventions for tags, data setup, and cleanup. I would also move more setup/teardown to supported APIs once available, separate smoke/regression/visual/live suites more aggressively, and keep CI tiers small enough that PR feedback remains useful.
 
 ## Selector Strategy
 

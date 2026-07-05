@@ -2,7 +2,7 @@
 
 This is a small Playwright TypeScript scaffold for the Stonly Senior QA Automation Engineer take-home task.
 
-The goal of this first version is architectural: tests consume extended fixtures such as `userSettingsPage`, not raw Playwright `{ page }` or a public `{ ui }` fixture.
+The goal of this first version is architectural: tests use one root `{ ui }` fixture and compose page/component access from there. Scenario-specific fixtures are extended locally in the spec that needs them.
 
 The assignment write-up is in [TAKE_HOME_PLAN.md](TAKE_HOME_PLAN.md).
 
@@ -77,13 +77,13 @@ npm run test:visual -- --update-snapshots
 
 ## Architecture
 
-- `src/fixtures/test.ts` exports the only `test` object used by specs.
-- The root `_ui` fixture is internal to the fixture module.
-- Public fixtures derive from `_ui` and expose ready-to-use pages/components.
+- `src/fixtures/test.ts` exports the only shared `test` object used by specs.
+- The shared test exposes one custom root fixture: `{ ui }`.
+- Scenario-specific fixtures, such as a navigated `{ userSettingsPage }`, are defined locally in the spec that needs them.
 - Page objects own distinct URLs and navigation.
 - Components and modals are composed under pages and lazy-loaded.
 - The default Headline suite uses Playwright route mocks. Live add/edit/delete coverage is opt-in with `npm run test:live`.
 - Mock and visual suites intentionally rely on real Stonly auth/app shell for this take-home, then mock only the Headline API contract.
 - Visual regression coverage uses Playwright's built-in `toHaveScreenshot` snapshots and runs post-merge on `main`.
 
-Specs should not destructure `{ page }`, `{ context }`, `{ browser }`, `{ ui }`, or `{ _ui }`. New scenario fixtures should be added in `src/fixtures/test.ts`.
+Specs should not destructure raw `{ page }`, `{ context }`, or `{ browser }` in test bodies. Those raw fixtures are allowed inside fixture definitions when constructing `Ui` or installing route mocks.
