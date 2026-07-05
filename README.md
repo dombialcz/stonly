@@ -1,4 +1,4 @@
-# Stonly QA Playwright Wireframe
+# Stonly QA Playwright Suite
 
 Small Playwright TypeScript suite for the Stonly Senior QA Automation Engineer take-home task.
 

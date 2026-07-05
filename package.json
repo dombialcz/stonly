@@ -1,8 +1,8 @@
 {
-  "name": "stonly-qa-playwright-wireframe",
+  "name": "stonly-qa-playwright-suite",
   "version": "0.1.0",
   "private": true,
-  "description": "Fixture-first Playwright wireframe for the Stonly QA take-home task.",
+  "description": "Fixture-first Playwright suite for the Stonly QA take-home task.",
   "scripts": {
     "test": "npm run test:mock",
     "test:mock": "cross-env STONLY_CONFIG=review playwright test tests/headline.mock.spec.ts",

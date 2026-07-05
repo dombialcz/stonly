@@ -1,6 +1,6 @@
 # Agent Notes
 
-This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task. Keep changes small, explicit, and aligned with the fixture-first UI model.
+This repo is a Playwright TypeScript suite for the Stonly QA take-home task. Keep changes small, explicit, and aligned with the fixture-first UI model.
 
 ## Agent Workflow
 
