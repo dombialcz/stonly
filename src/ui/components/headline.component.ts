@@ -9,14 +9,14 @@ export class HeadlineComponent extends BaseComponent {
   constructor(page: Page) {
     super(
       page,
-      page.locator('[data-cy="settingsCanvas"]').filter({
-        has: page.locator('[data-cy="userHeadline"]'),
+      page.getByTestId('settingsCanvas').filter({
+        has: page.getByTestId('userHeadline'),
       }),
     );
   }
 
   get content(): Locator {
-    return this.root.locator('[data-cy="userHeadline"]');
+    return this.root.getByTestId('userHeadline');
   }
 
   get value(): Locator {
@@ -24,15 +24,15 @@ export class HeadlineComponent extends BaseComponent {
   }
 
   get addAction(): Locator {
-    return this.root.locator('[data-cy="editButton"]').filter({ hasText: /^Add$/i });
+    return this.root.getByTestId('editButton').filter({ hasText: /^Add$/i });
   }
 
   get editAction(): Locator {
-    return this.root.locator('[data-cy="editButton"]').filter({ hasText: /^Edit$/i });
+    return this.root.getByTestId('editButton').filter({ hasText: /^Edit$/i });
   }
 
   get openEditorAction(): Locator {
-    return this.root.locator('[data-cy="editButton"]').filter({ hasText: /^(Add|Edit)$/i });
+    return this.root.getByTestId('editButton').filter({ hasText: /^(Add|Edit)$/i });
   }
 
   get editor(): HeadlineEditorComponent {

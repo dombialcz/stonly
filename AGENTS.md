@@ -54,7 +54,9 @@ This repo is a Playwright TypeScript wireframe for the Stonly QA take-home task.
 - UI objects should expose locators and user actions only.
 - Do not put assertions such as `expectVisible`, `expectLoaded`, or `toHave...` methods in models.
 - Do not add generic readiness checks to fixtures. If readiness matters, assert it in the test that depends on it.
-- Prefer Playwright role/label locators. Use CSS only inside wrappers and only when accessible selectors are insufficient.
+- Prefer Playwright role/label locators.
+- Stonly's `data-cy` is configured as Playwright's `testIdAttribute`; use `getByTestId(...)` for those hooks.
+- Use CSS only inside wrappers and only when role/label/test-id selectors are insufficient.
 
 ## Test Style
 

@@ -3,7 +3,7 @@ import { BaseComponent } from '../core/base-component';
 
 export class HeadlineEditorComponent extends BaseComponent {
   constructor(page: Page) {
-    super(page, page.locator('[data-cy="headlineDialog"]'));
+    super(page, page.getByTestId('headlineDialog'));
   }
 
   get input(): Locator {
