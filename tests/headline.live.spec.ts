@@ -25,40 +25,58 @@ const test = base.extend<{ userSettingsPage: UserSettingsPage }>({
 test.describe('headline live e2e', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('reads the baseline headline @happypath', async ({ userSettingsPage }) => {
-    const headline = userSettingsPage.profileForm.headline;
+  test.describe('headline read tests', () => {
+    test('reads the baseline headline @happypath', async ({ userSettingsPage }) => {
+      const headline = userSettingsPage.profileForm.headline;
 
-    await test.step('verify Profile shows the baseline Headline row', async () => {
-      await expect(userSettingsPage.profileHeading).toBeVisible();
-      await expect(headline.value).toHaveText(config.headlineBaseline);
-    });
+      await test.step('verify Profile shows the baseline Headline row', async () => {
+        await expect(userSettingsPage.profileHeading).toBeVisible();
+        await expect(headline.value).toHaveText(config.headlineBaseline);
+      });
 
-    await test.step('verify Headline row text can be read by the component', async () => {
-      expect(await headline.read()).toBe(config.headlineBaseline);
+      await test.step('verify Headline row text can be read by the component', async () => {
+        expect(await headline.read()).toBe(config.headlineBaseline);
+      });
     });
   });
 
-  test('writes a new headline @happypath', async ({ userSettingsPage }) => {
-    const headline = userSettingsPage.profileForm.headline;
-    const headlineValue = `QA Live Headline ${Date.now()}`;
+  test.describe('headline modify tests', () => {
+    test('writes a new headline @happypath', async ({ userSettingsPage }) => {
+      const headline = userSettingsPage.profileForm.headline;
+      const headlineValue = `QA Live Headline ${Date.now()}`;
 
-    await test.step('save a unique Headline through the UI', async () => {
       await headline.setValue(headlineValue);
+
+      await test.step('verify the Headline row shows the saved value', async () => {
+        await expect(headline.value).toHaveText(headlineValue);
+      });
     });
 
-    await test.step('verify the Headline row shows the saved value', async () => {
-      await expect(headline.value).toHaveText(headlineValue);
+    test('clears the headline by saving an empty value @happypath', async ({ userSettingsPage }) => {
+      const headline = userSettingsPage.profileForm.headline;
+
+      await headline.clearValue();
+
+      await test.step('verify the Headline row returns to the empty state', async () => {
+        await expect(headline.value).toHaveText(emptyHeadlineText);
+        await expect(headline.addAction).toHaveText(addHeadlineActionText);
+      });
     });
-  });
 
-  test('clears the headline by saving an empty value @happypath', async ({ userSettingsPage }) => {
-    const headline = userSettingsPage.profileForm.headline;
+    test('does not save headline changes when edit is cancelled @negative', async ({ userSettingsPage }) => {
+      const headline = userSettingsPage.profileForm.headline;
+      const attemptedHeadline = `QA Cancelled Headline ${Date.now()}`;
 
-    await headline.clearValue();
+      await test.step('cancel a changed Headline from the editor', async () => {
+        await headline.openEditorAction.click();
+        await headline.input.fill(attemptedHeadline);
+        await headline.editor.cancelAction.click();
+      });
 
-    await test.step('verify the Headline row returns to the empty state', async () => {
-      await expect(headline.value).toHaveText(emptyHeadlineText);
-      await expect(headline.addAction).toHaveText(addHeadlineActionText);
+      await test.step('verify the Headline row keeps the previous saved value', async () => {
+        await expect(headline.value).toHaveText(config.headlineBaseline);
+        await expect(headline.value).not.toHaveText(attemptedHeadline);
+      });
     });
   });
 });
