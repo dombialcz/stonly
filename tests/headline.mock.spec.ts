@@ -8,10 +8,12 @@ import {
   expectMockedProfileRead,
 } from './assertions/headline.api.assertions';
 import {
-  addHeadlineActionText,
-  emptyHeadlineText,
   failedUserUpdateResponse,
 } from './data/headline-api.data';
+import {
+  addHeadlineActionText,
+  emptyHeadlineText,
+} from './data/headline-ui.data';
 import { headlineApiFixtures } from './fixtures/headline-api-fixtures';
 
 type HeadlineMockFixtures = {

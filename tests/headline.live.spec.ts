@@ -5,7 +5,7 @@ import type { UserSettingsPage } from '../src/ui/pages/user-settings.page';
 import {
   addHeadlineActionText,
   emptyHeadlineText,
-} from './data/headline-api.data';
+} from './data/headline-ui.data';
 
 const test = base.extend<{ userSettingsPage: UserSettingsPage }>({
   userSettingsPage: async ({ ui }, use) => {
@@ -55,9 +55,7 @@ test.describe('headline live e2e', () => {
   test('clears the headline by saving an empty value @happypath', async ({ userSettingsPage }) => {
     const headline = userSettingsPage.profileForm.headline;
 
-    await test.step('save an empty Headline through the UI', async () => {
-      await headline.clearValue();
-    });
+    await headline.clearValue();
 
     await test.step('verify the Headline row returns to the empty state', async () => {
       await expect(headline.value).toHaveText(emptyHeadlineText);

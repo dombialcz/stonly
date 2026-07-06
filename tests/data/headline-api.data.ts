@@ -19,7 +19,3 @@ export const emptyHeadlineRequest = {
 export const userUpdateEndpoint = '/api/v1/user';
 
 export const authStatusEndpoint = '/api/v1/auth/status';
-
-export const emptyHeadlineText = 'No headline added';
-
-export const addHeadlineActionText = 'Add';
