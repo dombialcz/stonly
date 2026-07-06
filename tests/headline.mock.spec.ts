@@ -10,11 +10,10 @@ import {
 import {
   failedUserUpdateResponse,
 } from './data/headline-api.data';
-import {
-  addHeadlineActionText,
-  emptyHeadlineText,
-} from './data/headline-ui.data';
 import { headlineApiFixtures } from './fixtures/headline-api-fixtures';
+
+const emptyHeadlineText = 'No headline added';
+const addHeadlineActionText = 'Add';
 
 type HeadlineMockFixtures = {
   headlineApiMock: HeadlineApiMock;

@@ -2,10 +2,9 @@ import { config } from '../src/config/config';
 import { expect, test as base } from '../src/fixtures/test';
 import type { HeadlineComponent } from '../src/ui/components/headline.component';
 import type { UserSettingsPage } from '../src/ui/pages/user-settings.page';
-import {
-  addHeadlineActionText,
-  emptyHeadlineText,
-} from './data/headline-ui.data';
+
+const emptyHeadlineText = 'No headline added';
+const addHeadlineActionText = 'Add';
 
 const test = base.extend<{ userSettingsPage: UserSettingsPage }>({
   userSettingsPage: async ({ ui }, use) => {
